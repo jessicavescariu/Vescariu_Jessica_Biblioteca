@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h1>Library Statistics</h1>
+
+<hr />
+
+<h4>General statistics</h4>
+
+<table class="table">
+    <tr>
+        <th>Total books</th>
+        <td>@ViewBag.TotalBooks</td>
+    </tr>
+    <tr>
+        <th>Total authors</th>
+        <td>@ViewBag.TotalAuthors</td>
+    </tr>
+    <tr>
+        <th>Total customers</th>
+        <td>@ViewBag.TotalCustomers</td>
+    </tr>
+    <tr>
+        <th>Total orders</th>
+        <td>@ViewBag.TotalOrders</td>
+    </tr>
+    <tr>
+        <th>Average book price</th>
+        <td>@String.Format("{0:F2}", ViewBag.AveragePrice)</td>
+    </tr>
+</table>
+
+<h4>Top 5 most ordered books</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book title</th>
+            <th>Number of orders</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in ViewBag.MostOrderedBooks)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.OrderCount</td>
+            </tr>
+        }
+    </tbody>
+</table>

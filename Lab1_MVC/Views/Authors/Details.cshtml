@@ -1,0 +1,62 @@
+﻿
+@model Lab1_MVC.Models.Author
+
+@{
+    ViewData["Title"] = "Author Details";
+    var totalOrders = Model.Books.Sum(b => b.Orders.Count);
+    var distinctGenres = Model.Books
+        .Where(b => b.Genre != null)
+        .Select(b => b.Genre.Name)
+        .Distinct()
+        .Count();
+}
+
+<h1>Author Details</h1>
+
+<div>
+    <h4>@Model.FullName</h4>
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-3">First Name</dt>
+        <dd class="col-sm-9">@Model.FirstName</dd>
+
+        <dt class="col-sm-3">Last Name</dt>
+        <dd class="col-sm-9">@Model.LastName</dd>
+
+        <dt class="col-sm-3">Total Orders</dt>
+        <dd class="col-sm-9">@totalOrders</dd>
+
+        <dt class="col-sm-3">Distinct Genres (V4)</dt>
+        <dd class="col-sm-9">@ViewBag.DistinctGenres</dd>
+    </dl>
+</div>
+
+<h4>Books by this author</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Price</th>
+            <th>Orders</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var book in Model.Books)
+    {
+        <tr>
+            <td>@book.Title</td>
+            <td>@book.Genre?.Name</td>
+            <td>@book.Price</td>
+            <td>@book.Orders.Count</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

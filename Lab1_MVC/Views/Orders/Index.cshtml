@@ -1,0 +1,47 @@
+﻿
+@model IEnumerable<Lab1_MVC.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Orders</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <label>Filter by customer:</label>
+    <select name="customerId" asp-items="ViewBag.CustomerID">
+        <option value="">All customers</option>
+    </select>
+    <input type="submit" value="Filter" class="btn btn-primary" />
+    <a asp-action="Index">Clear</a>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Book</th>
+            <th>Order Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+            <td>@item.Customer.Name</td>
+            <td>@item.Book.Title</td>
+            <td>@item.OrderDate.ToShortDateString()</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

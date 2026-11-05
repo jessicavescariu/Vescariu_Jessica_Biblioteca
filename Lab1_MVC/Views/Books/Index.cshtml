@@ -1,20 +1,122 @@
-@model IEnumerable<BookRow>
+@model Lab1_MVC.Models.PaginatedList<Lab1_MVC.Models.BookListItem>
 
 @{
-    ViewData["Title"] = "Catalog";
+    ViewData["Title"] = "Books";
 }
 
-<h1>Catalog</h1>
-<p><a asp-action="Create">Create New</a></p>
+<h1>Books</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
+
+    <div class="form-group mb-2">
+        <label>Search by title:</label>
+        <input type="text"
+               name="searchString"
+               value="@ViewData["CurrentFilter"]"
+               class="form-control" />
+    </div>
+
+    <div class="form-group mb-2">
+        <label>Filter by author:</label>
+        <select name="authorId"
+                asp-items="ViewBag.AuthorID"
+                class="form-control">
+            <option value="">Toate</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Search / Filter</button>
+    <a asp-action="Index" class="btn btn-secondary">Clear filters</a>
+</form>
 
 <table class="table">
     <thead>
-    <tr><th>Titlu</th><th>Autor</th><th>Comenzi</th></tr>
+        <tr>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["TitleSortParm"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-authorId="@ViewData["CurrentAuthor"]">
+                    Title
+                </a>
+            </th>
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["AuthorSortParm"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-authorId="@ViewData["CurrentAuthor"]">
+                    Author
+                </a>
+            </th>
+
+            <th>Genre</th>
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["PriceSortParm"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-authorId="@ViewData["CurrentAuthor"]">
+                    Price
+                </a>
+            </th>
+
+            <th>Orders</th>
+            <th></th>
+        </tr>
     </thead>
+
     <tbody>
-    @foreach (var r in Model)
-    {
-        <tr><td>@r.Title</td><td>@r.Author</td><td>@r.Orders</td></tr>
-    }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Author</td>
+                <td>@item.Genre</td>
+                <td>@item.Price</td>
+                <td>@item.Orders</td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div>
+    @if (Model.HasPreviousPage)
+    {
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           asp-route-authorId="@ViewData["CurrentAuthor"]"
+           class="btn btn-primary">
+            Previous
+        </a>
+    }
+
+    <span class="mx-2">
+        Page @Model.PageIndex of @Model.TotalPages
+    </span>
+
+    @if (Model.HasNextPage)
+    {
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           asp-route-authorId="@ViewData["CurrentAuthor"]"
+           class="btn btn-primary">
+            Next
+        </a>
+    }
+</div>
