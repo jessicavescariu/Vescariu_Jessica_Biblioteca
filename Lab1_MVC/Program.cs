@@ -9,6 +9,7 @@ using Microsoft.Extensions.AI;
 using OpenAI;
 using System.ClientModel;
 using Lab1_MVC.Services;
+using Microsoft.Extensions.ML;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<LibraryContext>(options =>
@@ -22,7 +23,12 @@ builder.Services
     .FromFile(modelName: "BookRecommender",
         filePath: "MLModels/BookRecommender.zip",
         watchForChanges: true);
-
+builder.Services
+    .AddPredictionEnginePool<BookText, GenrePrediction>()
+    .FromFile(
+        modelName: "GenreClassifier",
+        filePath: "MLModels/GenreClassifier.zip",
+        watchForChanges: true);
 builder.Services.AddValidation();
 
 builder.Services.AddOpenApi();
