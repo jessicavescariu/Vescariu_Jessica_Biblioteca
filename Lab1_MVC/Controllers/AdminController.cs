@@ -78,6 +78,53 @@ namespace Lab1_MVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Log(
+            int? readerId,
+            DateTime? from,
+            DateTime? to,
+            string sortOrder,
+            int? pageNumber)
+        {
+            var logs = db.RecommendationLog.AsQueryable();
+
+            if (readerId.HasValue)
+                logs = logs.Where(l => l.ReaderId == readerId.Value);
+
+            if (from.HasValue)
+                logs = logs.Where(l => l.CreatedAt >= from.Value);
+
+            if (to.HasValue)
+                logs = logs.Where(l => l.CreatedAt < to.Value.AddDays(1));
+
+            logs = sortOrder == "oldest"
+                ? logs.OrderBy(l => l.CreatedAt)
+                : logs.OrderByDescending(l => l.CreatedAt);
+
+            int pageSize = 10;
+
+            var items = await logs
+                .Select(l => new RecommendationLog
+                {
+                    ID = l.ID,
+                    ReaderId = l.ReaderId,
+                    CreatedAt = l.CreatedAt,
+                    BookIds = l.BookIds
+                })
+                .ToListAsync();
+
+            var paginated = PaginatedList<RecommendationLog>.Create(
+                items, pageNumber ?? 1, pageSize);
+
+            ViewBag.ReaderId = readerId;
+            ViewBag.From = from;
+            ViewBag.To = to;
+            ViewBag.SortOrder = sortOrder;
+
+            return View(paginated);
+        }
+
     }
+
 
 }

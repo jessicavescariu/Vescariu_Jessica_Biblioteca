@@ -151,7 +151,15 @@ app.MapGet("/api/v2/readers/{id:int}/recommendations",
                 .OrderByDescending(r => r.Score)
                 .Take(take)
                 .ToList();
+            db.RecommendationLog.Add(new RecommendationLog
+            {
+                ReaderId = id,
+                CreatedAt = DateTime.UtcNow,
+                BookIds = System.Text.Json.JsonSerializer.Serialize(
+        result.Select(r => r.BookId).ToList())
+            });
 
+            await db.SaveChangesAsync();
             return Results.Ok(result);
         }
 
@@ -183,6 +191,17 @@ app.MapGet("/api/v2/readers/{id:int}/recommendations",
                 true
             ))
             .ToList();
+
+        //return Results.Ok(fallback);
+        db.RecommendationLog.Add(new RecommendationLog
+        {
+            ReaderId = id,
+            CreatedAt = DateTime.UtcNow,
+            BookIds = System.Text.Json.JsonSerializer.Serialize(
+        fallback.Select(r => r.BookId).ToList())
+        });
+
+        await db.SaveChangesAsync();
 
         return Results.Ok(fallback);
     });
