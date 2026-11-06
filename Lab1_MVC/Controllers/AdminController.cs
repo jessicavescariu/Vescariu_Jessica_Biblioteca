@@ -3,10 +3,12 @@ using Lab1_MVC.Data;
 using Lab1_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Lab1_MVC.Services;
 
 namespace Lab1_MVC.Controllers
 {
-    public class AdminController(LibraryContext db) : Controller
+    //public class AdminController(LibraryContext db) : Controller
+    public class AdminController(LibraryContext db, RecommenderTrainer trainer) : Controller
     {
         public async Task<IActionResult> Index()
         {
@@ -60,5 +62,22 @@ namespace Lab1_MVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Retrain()
+        {
+            try
+            {
+                await trainer.TrainAsync();
+                TempData["Msg"] = "Modelul de recomandări a fost reantrenat cu succes.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Msg"] = "Eroare la antrenare: " + ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
+
 }

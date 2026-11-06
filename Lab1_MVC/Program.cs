@@ -8,6 +8,7 @@ using Scalar.AspNetCore;
 using Microsoft.Extensions.AI;
 using OpenAI;
 using System.ClientModel;
+using Lab1_MVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<LibraryContext>(options =>
@@ -34,7 +35,7 @@ IChatClient chat = new OpenAIClient(new ApiKeyCredential("ollama"),
     .AsIChatClient();
 
 builder.Services.AddChatClient(chat);
-
+builder.Services.AddScoped<RecommenderTrainer>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

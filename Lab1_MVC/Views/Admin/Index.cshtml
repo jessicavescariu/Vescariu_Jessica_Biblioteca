@@ -36,6 +36,17 @@
                accept=".csv"
                class="form-control" />
     </div>
+    <hr />
+
+<h3>Reantrenare model recomandări</h3>
+
+<form asp-action="Retrain" method="post">
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-warning">
+        Reantrenează modelul
+    </button>
+</form>
 
     <button type="submit" class="btn btn-primary">
         Importă evaluările
