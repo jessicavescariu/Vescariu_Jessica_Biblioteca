@@ -124,6 +124,68 @@ namespace Lab1_MVC.Controllers
             return View(paginated);
         }
 
+        public async Task<IActionResult> Dashboard()
+        {
+            // Numărul total de evaluări
+            ViewBag.RatingCount = await db.Rating.CountAsync();
+
+            // Numărul de cititori unici
+            ViewBag.ReaderCount = await db.Rating
+                .Select(r => r.ReaderId)
+                .Distinct()
+                .CountAsync();
+
+            // Media generală a evaluărilor
+            ViewBag.AverageStars = await db.Rating
+                .Select(r => (double?)r.Stars)
+                .AverageAsync() ?? 0;
+
+            // Distribuția evaluărilor de la 1 la 5 stele
+            var distribution = await db.Rating
+                .GroupBy(r => r.Stars)
+                .Select(g => new
+                {
+                    Stars = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            ViewBag.StarLabels = new[] { "1 stea", "2 stele", "3 stele", "4 stele", "5 stele" };
+
+            ViewBag.StarCounts = Enumerable.Range(1, 5)
+                .Select(stars => distribution
+                    .Where(d => d.Stars == stars)
+                    .Select(d => d.Count)
+                    .FirstOrDefault())
+                .ToArray();
+
+            // Varianta B3: media evaluărilor pe editură
+            var publisherAverages = await db.Rating
+                .SelectMany(r => r.Book.Publishers.Select(p => new
+                {
+                    PublisherName = p.Name,
+                    Stars = r.Stars
+                }))
+                .GroupBy(x => x.PublisherName)
+                .Select(g => new
+                {
+                    Publisher = g.Key,
+                    Average = g.Average(x => x.Stars)
+                })
+                .OrderBy(x => x.Publisher)
+                .ToListAsync();
+
+            ViewBag.PublisherLabels = publisherAverages
+                .Select(x => x.Publisher)
+                .ToArray();
+
+            ViewBag.PublisherAverages = publisherAverages
+                .Select(x => (double)x.Average)
+                .ToArray();
+
+            return View();
+        }
+
     }
 
 

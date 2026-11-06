@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var starLabels = System.Text.Json.JsonSerializer.Serialize(ViewBag.StarLabels);
+    var starCounts = System.Text.Json.JsonSerializer.Serialize(ViewBag.StarCounts);
+    var publisherLabels = System.Text.Json.JsonSerializer.Serialize(ViewBag.PublisherLabels);
+    var publisherAverages = System.Text.Json.JsonSerializer.Serialize(ViewBag.PublisherAverages);
+}
+
+<h1>Dashboard statistici</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Total evaluări</h5>
+            <h2>@ViewBag.RatingCount</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Cititori unici</h5>
+            <h2>@ViewBag.ReaderCount</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Media generală</h5>
+            <h2>@(((double)ViewBag.AverageStars).ToString("0.00")) / 5</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <h4>Distribuția evaluărilor</h4>
+        <canvas id="ratingsChart"></canvas>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <h4>Media evaluărilor pe editură (B3)</h4>
+        <canvas id="publisherChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const starLabels = @Html.Raw(starLabels);
+    const starCounts = @Html.Raw(starCounts);
+
+    const publisherLabels = @Html.Raw(publisherLabels);
+    const publisherAverages = @Html.Raw(publisherAverages);
+
+    new Chart(document.getElementById('ratingsChart'), {
+        type: 'bar',
+        data: {
+            labels: starLabels,
+            datasets: [{
+                label: 'Număr evaluări',
+                data: starCounts
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('publisherChart'), {
+        type: 'bar',
+        data: {
+            labels: publisherLabels,
+            datasets: [{
+                label: 'Media stelelor',
+                data: publisherAverages
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 5
+                }
+            }
+        }
+    });
+</script>
