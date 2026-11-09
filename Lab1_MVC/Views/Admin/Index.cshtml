@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewData["Title"] = "Administrare";
+}
+
+<h1>Administrare</h1>
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Msg"]
+    </div>
+}
+
+<p>
+    Număr evaluări existente:
+    <strong>@ViewBag.Ratings</strong>
+</p>
+
+<h3>Import evaluări din CSV</h3>
+
+<form asp-action="ImportRatings"
+      method="post"
+      enctype="multipart/form-data">
+
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="file" class="form-label">
+            Selectați fișierul book-ratings.csv
+        </label>
+
+        <input type="file"
+               name="file"
+               id="file"
+               accept=".csv"
+               class="form-control" />
+    </div>
+    <hr />
+
+<h3>Reantrenare model recomandări</h3>
+
+<form asp-action="Retrain" method="post">
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-warning">
+        Reantrenează modelul
+    </button>
+</form>
+
+    <button type="submit" class="btn btn-primary">
+        Importă evaluările
+    </button>
+</form>
+<hr />
+
+<h3>Istoric recomandări</h3>
+
+<a asp-action="Log" class="btn btn-outline-primary">
+    Vezi jurnalul recomandărilor
+</a>
+<hr />
+
+<h3>Statistici</h3>
+
+<a asp-action="Dashboard" class="btn btn-outline-success">
+    Deschide Dashboard
+</a>

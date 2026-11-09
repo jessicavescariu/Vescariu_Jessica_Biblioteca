@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Lab1_MVC.Models;
 using Lab1_MVC.Data;
 using System.Diagnostics;
+using Microsoft.Extensions.ML;
 
 namespace Lab1_MVC.Controllers
 {
@@ -270,4 +271,27 @@ namespace Lab1_MVC.Controllers
             return _context.Book.Any(e => e.ID == id);
         }
     }
+
+    public record SuggestGenreRequest(string Description);
+
+    [HttpPost]
+    public IActionResult SuggestGenre(
+        [FromBody] SuggestGenreRequest req,
+        [FromServices] PredictionEnginePool<BookText, GenrePrediction> pool)
+    {
+        if (string.IsNullOrWhiteSpace(req.Description))
+            return BadRequest("Scrieți o descriere.");
+
+        var prediction = pool.Predict(
+            "GenreClassifier",
+            new BookText { Description = req.Description }
+        );
+
+        return Json(new
+        {
+            genre = prediction.Genre,
+            confidence = prediction.Score.Max()
+        });
+    }
+
 }

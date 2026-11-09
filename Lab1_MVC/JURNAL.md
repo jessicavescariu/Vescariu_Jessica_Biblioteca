@@ -92,3 +92,81 @@ var distinctGenres = await _context.Book
 \\\Nu am identificat cerințe pe care să le declar incomplete. Verificarea finală a proiectului și a tuturor cerințelor laboratorului a fost realizata pe parcurs cu fiecare etapa/modificare in parte.
 
 
+## Laboratorul 5 – Recomandări și clasificare folosind Machine Learning
+
+### Obiectivul laboratorului
+
+Scopul laboratorului a fost extinderea aplicației Biblioteca prin integrarea unor funcționalități bazate pe Machine Learning. Au fost implementate mecanisme pentru colectarea evaluărilor utilizatorilor, antrenarea și utilizarea modelelor de recomandare, generarea de recomandări personalizate, clasificarea cărților pe baza descrierilor și monitorizarea activității prin intermediul unui dashboard.
+
+### A1 – Evaluări în baza de date și import CSV
+
+Am creat modelul `Rating`, care permite stocarea evaluărilor acordate de cititori cărților. Acesta conține identificatorul evaluării, identificatorul cititorului, identificatorul cărții, numărul de stele și data înregistrării.
+
+Am adăugat proprietatea `DbSet<Rating>` în `LibraryContext` pentru gestionarea evaluărilor prin Entity Framework Core.
+
+În cadrul `AdminController` am implementat funcționalitatea de import al evaluărilor dintr-un fișier CSV. Administratorul poate selecta fișierul din interfața aplicației, iar datele sunt citite și salvate în baza de date.
+
+Am adăugat și o pagină de administrare care permite vizualizarea numărului de evaluări și încărcarea fișierului CSV.
+
+
+### A2 – Reantrenarea modelului de recomandare
+
+Am creat serviciul `RecommenderTrainer`, responsabil pentru antrenarea modelului de recomandare folosind evaluările existente în baza de date.
+
+Datele sunt preluate prin Entity Framework Core și transformate într-un format compatibil cu biblioteca ML.NET. Pentru antrenare am utilizat algoritmul Matrix Factorization, potrivit pentru sisteme de recomandare bazate pe interacțiunile dintre utilizatori și produse.
+
+Modelul antrenat este salvat în directorul `MLModels`, sub forma fișierului `BookRecommender.zip`.
+
+Am înregistrat serviciul în `Program.cs` prin Dependency Injection și am adăugat în interfața administratorului un buton pentru declanșarea procesului de reantrenare.
+
+
+### A3 – API pentru recomandări și mecanism Cold Start
+
+Am implementat un endpoint API pentru obținerea recomandărilor personalizate:
+
+`/api/v2/readers/{id}/recommendations`
+
+Endpoint-ul primește identificatorul cititorului și un parametru opțional `top`, care stabilește numărul maxim de recomandări returnate.
+
+Pentru generarea recomandărilor sunt utilizate predicțiile modelului ML.NET. Cărțile deja evaluate de utilizator sunt excluse din lista rezultatelor.
+
+Am implementat și mecanismul Cold Start, care oferă o alternativă atunci când nu pot fi generate recomandări personalizate. În această situație sunt selectate cărțile cu cel puțin 15 evaluări, ordonate în funcție de media notelor primite.
+
+Rezultatele sunt returnate în format JSON, prin intermediul modelului `RecommendationDto`.
+
+Am adăugat și exemple de solicitări API în fișierul `Misiunea1.http`, pentru verificarea recomandărilor, a parametrului `top` și a situației unui cititor fără istoric.
+
+
+### A4 – Clasificarea genului unei cărți pe baza descrierii
+
+Am realizat un proiect separat, denumit `GenreTraining`, destinat antrenării unui model de clasificare folosind biblioteca ML.NET.
+
+Pentru antrenare am utilizat fișierul `book-descriptions.csv`, care conține descrierile cărților și genurile corespunzătoare.
+
+Datele au fost împărțite în set de antrenare și set de testare, utilizând o proporție de 80% pentru antrenare și 20% pentru testare.
+
+Am construit un pipeline ML.NET care include transformarea etichetelor, extragerea caracteristicilor textuale prin `FeaturizeText` și clasificarea multiclasă prin algoritmul `SdcaMaximumEntropy`.
+
+Pentru evaluarea modelului au fost incluse metricile MicroAccuracy și MacroAccuracy, precum și matricea de confuzie. Modelul antrenat este salvat în fișierul `GenreClassifier.zip`.
+
+În aplicația principală am adăugat clasele `BookText` și `GenrePrediction`, precum și metoda `SuggestGenre` în `BooksController`.
+
+În formularul de adăugare a unei cărți (`Create.cshtml`) am introdus butonul „Sugerează genul”, care permite transmiterea descrierii către endpoint-ul de clasificare și afișarea genului sugerat împreună cu nivelul de încredere al predicției.
+
+
+### S1 – Jurnalizarea recomandărilor
+
+Am creat modelul `RecommendationLog`, destinat înregistrării istoricului recomandărilor generate pentru cititori.
+
+Modelul conține identificatorul înregistrării, identificatorul cititorului, data generării recomandărilor și lista identificatorilor cărților recomandate.
+
+Am adăugat `DbSet<RecommendationLog>` în `LibraryContext` și am modificat endpoint-ul de recomandări astfel încât rezultatele generate, inclusiv cele obținute prin mecanismul Cold Start, să fie înregistrate în baza de date.
+
+În `AdminController` am implementat metoda `Log`, care permite consultarea istoricului recomandărilor și filtrarea acestuia după cititor, interval de date și criteriul de sortare.
+
+Am creat și pagina `Views/Admin/Log.cshtml`, în care administratorul poate vizualiza înregistrările și naviga între paginile rezultatelor.
+
+
+### S2 – Dashboard cu statistici
+
+Am implementat o pagină de tip dashboard pentru administrator, destinată monitoriz

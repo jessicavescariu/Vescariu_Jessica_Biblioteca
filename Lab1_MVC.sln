@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.10.12224.181 stable
+VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab1_MVC", "Lab1_MVC\Lab1_MVC.csproj", "{0E593B93-DEA5-48ED-809D-C2697AD83802}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.ML.Training", "Biblioteca.ML.Training\Biblioteca.ML.Training.csproj", "{A2823E79-B562-441F-BA5B-689646EAD221}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenreTraining", "GenreTraining\GenreTraining.csproj", "{B9678549-1278-4AC1-B048-9329761AFC7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A2823E79-B562-441F-BA5B-689646EAD221}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2823E79-B562-441F-BA5B-689646EAD221}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2823E79-B562-441F-BA5B-689646EAD221}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9678549-1278-4AC1-B048-9329761AFC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9678549-1278-4AC1-B048-9329761AFC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9678549-1278-4AC1-B048-9329761AFC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9678549-1278-4AC1-B048-9329761AFC7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

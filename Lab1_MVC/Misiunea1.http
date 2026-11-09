@@ -74,4 +74,14 @@ POST {{host}}/api/v2/books/1/pitch
 POST {{host}}/api/v2/books/37/pitch
 
 ### 16. Intrebare libera
+
 GET {{host}}/api/v2/ask?q=Ce%20carti%20de%20Liviu%20Rebreanu%20aveti%20in%20biblioteca%20si%20sunt%20disponibile%3F
+
+### Recomandări pentru cititorul 5
+GET {{host}}/api/v2/readers/5/recommendations
+
+### Primele 3 recomandări
+GET {{host}}/api/v2/readers/5/recommendations?top=3
+
+### Cititor fără istoric
+GET {{host}}/api/v2/readers/999/recommendations
